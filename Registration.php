@@ -16,11 +16,15 @@ checkFile(DATABASE_PASSWORD);
 if ($_SERVER["REQUEST_METHOD"] === "POST") 
 {
     $name = $_POST["name"];
-    $login = $_POST["login"];
-    $phone = $_POST["phone"];
-    $email = $_POST["email"];
+    $login = trim($_POST["login"]);
+    $phone = trim($_POST["phone"]);
+    $email = trim($_POST["email"]);
     $password = $_POST["password"];
     $passwordCheck = $_POST["passwordCheck"];
+    if (empty($name) || empty($login) || empty($phone) || empty($email) || empty($password)) {
+        echo "Заполните все поля";
+        return;
+    }
     $user = file(DATABASE_USER, FILE_IGNORE_NEW_LINES);
     $storedPasswords = file(DATABASE_PASSWORD, FILE_IGNORE_NEW_LINES);
     foreach ($user as $users) {
@@ -44,6 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
 
 <form method="POST">
     <a href="Index.php"><--Назад</a><br>
+    <a href="Login.php"><--Авторизация</a><br>
     Имя: <input type="text" name="name" required><br>
     Логин: <input type="text" name="login" required><br>
     Телефон: <input type="text" name="phone" required><br>
