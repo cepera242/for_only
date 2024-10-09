@@ -55,6 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
     file_put_contents(DATABASE, "{$time},{$id},{$name},{$login},{$phone},{$email},{$password}\n", FILE_APPEND);
     echo "Вы успешно зарегистрированы";
 }
+
 ?>
 
 <form method="POST">

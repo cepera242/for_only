@@ -1,5 +1,6 @@
 <?php
-//session_start();
+
+session_start();
 
 const DATABASE = "data/base.txt";
 
@@ -35,7 +36,7 @@ function checkData($phoneOrEmail, $passwordCheck)
         $user["email"] === inString($phoneOrEmail) ||
         $user["login"] === inString($phoneOrEmail)) &&
         $user["password"] === trim($passwordCheck)) {
-            return $user["name"];
+            return $user;
         } 
     }
     return null;
@@ -44,11 +45,13 @@ function checkData($phoneOrEmail, $passwordCheck)
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $phoneOrEmail = inString($_POST["phoneOrEmail"]);
     $passwordCheck = trim($_POST["passwordCheck"]);
-    $userName = checkData($phoneOrEmail, $passwordCheck);
-    if ($userName === null) {
+    $user = checkData($phoneOrEmail, $passwordCheck);
+    if ($user === null) {
         echo "Неверный логин и пароль";
     } else {  
-        echo "Вы вошли как {$userName}";
+        $_SESSION["user"] = $user;
+        header("Location: UserPage.php");
+        exit();
     }
 }
 
@@ -57,6 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <form method="POST">
     <a href="Index.php"><--Назад</a><br>
     <a href="Registration.php"><--Регистрация</a><br>
+    <a href="UserPage.php">->-Перейти на свою страницу</a><br>
     Телефон или почта: <input type="text" name="phoneOrEmail" required><br>
     Пароль: <input type="password" name="passwordCheck" required><br>
     <input type="submit" value="Войти">

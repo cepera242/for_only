@@ -1,7 +1,8 @@
 <?php
 
 echo "Зарегистрируйтесь или авторизируйтесь";
+
 ?>
 
-<a href="nextFile">Авторизация</a>
-<a href="nextFile">Регистрация</a>
+<a href="Login.php">Авторизация</a>
+<a href="Registration.php">Регистрация</a>
