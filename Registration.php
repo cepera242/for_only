@@ -1,7 +1,6 @@
 <?php
 
-const DATABASE_USER = "data/user.txt";
-const DATABASE_PASSWORD = "data/password.txt";
+const DATABASE = "data/base.txt";
 
 function checkFile($file)
  {
@@ -10,38 +9,50 @@ function checkFile($file)
     }
 }
 
-checkFile(DATABASE_USER);
-checkFile(DATABASE_PASSWORD);
+checkFile(DATABASE);
+
+function inString($string)
+{
+    return mb_strtolower(trim($string));
+}
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") 
 {
     $name = $_POST["name"];
-    $login = trim($_POST["login"]);
-    $phone = trim($_POST["phone"]);
-    $email = trim($_POST["email"]);
-    $password = $_POST["password"];
+    $login = inString($_POST["login"]);
+    $phone = inString($_POST["phone"]);
+    $email = inString($_POST["email"]);
+    $password = trim($_POST["password"]);
     $passwordCheck = $_POST["passwordCheck"];
-    if (empty($name) || empty($login) || empty($phone) || empty($email) || empty($password)) {
-        echo "Заполните все поля";
-        return;
-    }
-    $user = file(DATABASE_USER, FILE_IGNORE_NEW_LINES);
-    $storedPasswords = file(DATABASE_PASSWORD, FILE_IGNORE_NEW_LINES);
-    foreach ($user as $users) {
-        list($dblogin, $dbPhone, $dbEmail) = explode(", ", $users);
-        if ($dblogin === $login || $dbPhone === $phone || $dbEmail === $email) {
-            echo "Пользователь уже зарегистрирован";
-            return;
-        }
-    }
     if ($password !== $passwordCheck) {
         echo "Пароли не совпадают";
         return;
     }
+    if (empty($name) ||
+    empty($login) ||
+    empty($phone) ||
+    empty($email) ||
+    empty($password) ||
+    empty($passwordCheck)) {
+        echo "Заполните все поля";
+        return;
+    }
+    $user = file(DATABASE, FILE_IGNORE_NEW_LINES);
+    foreach ($user as $line) {
+        list($dbTime, $dbId, $dbName, $dblogin, $dbPhone, $dbEmail) = explode(",", inString($line));
+        if (inString($dblogin) === inString($login)) {
+            echo "Пользователь уже зарегистрирован";
+            return;
+        } elseif (inString($dbPhone) === inString($phone)) {
+            echo "Пользователь уже зарегистрирован";
+            return;
+        } elseif (inString($dbEmail) === inString($email)) {
+            echo "Пользователь уже зарегистрирован";  
+        }
+    }
     $time = date("Y-m-d H:i:s");
     $id = count($user) + 1;
-    file_put_contents(DATABASE_USER, "{$time}, {$id}, {$name}, {$login}, {$phone}, {$email}\n", FILE_APPEND);
-    file_put_contents(DATABASE_PASSWORD, "{$time}, {$id}, {$password}\n", FILE_APPEND);
+    file_put_contents(DATABASE, "{$time},{$id},{$name},{$login},{$phone},{$email},{$password}\n", FILE_APPEND);
     echo "Вы успешно зарегистрированы";
 }
 ?>
